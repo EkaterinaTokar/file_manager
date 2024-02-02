@@ -181,6 +181,36 @@ const promptCommand = () => {
       } catch (error) {
         console.error(`Failed to delete file: ${error.message}`);
       }
+    } else if (command === "os") {
+      console.log(`Default End-Of-Line (EOL): ${os.EOL}`);
+      const cpus = os.cpus();
+      console.log("Host machine CPUs info:");
+      cpus.forEach((cpu, index) => {
+        console.log(`CPU ${index + 1}:`);
+        console.log(`  Model: ${cpu.model}`);
+        console.log(`  Clock rate: ${cpu.speed} GHz`);
+      });
+      console.log(`Overall amount of CPUs: ${cpus.length}`);
+      console.log(`Home directory: ${os.homedir()}`);
+      console.log(`Current system user name: ${os.userInfo().username}`);
+      console.log(
+        `CPU architecture for which Node.js binary has compiled: ${os.arch()}`
+      );
+      console.log(`You are currently in ${process.cwd()}`);
+    } else if (command === "hash") {
+      const [command, filename] = line.trim().split(" ");
+
+      const hash = crypto.createHash("sha256");
+
+      const input = fs.createReadStream(filename);
+      input.on("readable", () => {
+        const data = input.read();
+        if (data) hash.update(data);
+        else {
+          console.log(`${hash.digest("hex")} ${filename}`);
+        }
+      });
+      console.log(`You are currently in ${process.cwd()}`);
     }
     process.on("SIGINT", () => {
       console.log(`Thank you for using File Manager, ${username}, goodbye!`);
